@@ -1,0 +1,13 @@
+{{define "title"}}
+  {{index . "name"}}
+{{end}}
+
+{{define "body"}}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>{{index . "msg"}}</h1>
+        </div>
+    </div>
+</div>
+{{end}}

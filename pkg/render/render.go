@@ -1,31 +1,67 @@
 package render
 
 import (
+	"errors"
+	"html/template"
 	"io"
-	"text/template"
+	"path/filepath"
 
 	"github.com/labstack/echo/v4"
 )
 
-// TemplateRenderer is a custom html/template renderer for Echo framework
-type TemplateRenderer struct {
-	templates *template.Template
+var functions = template.FuncMap{}
+
+// Define the template registry struct
+type TemplateRegistry struct {
+	templates map[string]*template.Template
 }
 
-func Templates() *TemplateRenderer {
-	renderer := &TemplateRenderer{
-		templates: template.Must(template.ParseGlob("templates/*.tmpl")),
+// RenderTemplate function to render views
+func RenderTemplate() *TemplateRegistry {
+	templates, err := CreateTemplateCache()
+	if err != nil {
+		panic(err)
 	}
-	return renderer
+	return &TemplateRegistry{
+		templates: templates,
+	}
 }
 
-// Render renders a template document
-func (t *TemplateRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-
-	// Add global methods if data is a map
-	if viewContext, isMap := data.(map[string]interface{}); isMap {
-		viewContext["reverse"] = c.Echo().Reverse
+// CreateTemplateCache creates the cache
+func CreateTemplateCache() (map[string]*template.Template, error) {
+	myCache := make(map[string]*template.Template)
+	pages, err := filepath.Glob("view/*.page.tmpl")
+	if err != nil {
+		return myCache, err
 	}
+	for _, page := range pages {
+		name := filepath.Base(page)
+		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
+		if err != nil {
+			return myCache, err
+		}
+		matches, err := filepath.Glob("view/*.layout.tmpl")
+		if err != nil {
+			return myCache, err
+		}
+		if len(matches) > 0 {
+			ts, err = ts.ParseGlob("view/*.layout.tmpl")
+			if err != nil {
+				return myCache, err
+			}
+		}
+		myCache[name] = ts
+	}
+	return myCache, nil
+}
 
-	return t.templates.ExecuteTemplate(w, name, data)
+// Implement e.Renderer interface
+func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+
+	tmpl, ok := t.templates[name]
+	if !ok {
+		err := errors.New("Template not found -> " + name)
+		return err
+	}
+	return tmpl.ExecuteTemplate(w, "base.layout.tmpl", data)
 }

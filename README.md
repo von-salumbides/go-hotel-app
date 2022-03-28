@@ -16,7 +16,8 @@
 
 ### Prerequisites
 - Built in Go 1.18
-- Uses the [echo package](https://github.com/labstack/echo)  
+- Uses the [echo package](https://github.com/labstack/echo)
+- Uses the [zap package](https://go.uber.org/zap)
 
 ### Installing
 

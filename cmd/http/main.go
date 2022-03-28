@@ -40,7 +40,6 @@ func main() {
 	// if err := e.Shutdown(ctx); err != nil {
 	// 	e.Logger.Fatal(err)
 	// }
-
 	serverConfig := server.NewServerConfig(":8080", false)
 	httpServer, err := server.NewServer(serverConfig)
 	if err != nil && err != http.ErrServerClosed {
@@ -54,6 +53,6 @@ func main() {
 	<-quit
 	err = httpServer.Shutdown(300 * time.Second)
 	if err == nil {
-		logger.Info("Shutdown successful")
+		logger.Info("Shutdown successfully")
 	}
 }

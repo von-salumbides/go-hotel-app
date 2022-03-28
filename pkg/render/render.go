@@ -57,7 +57,6 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 // Implement e.Renderer interface
 func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-
 	tmpl, ok := t.templates[name]
 	if !ok {
 		err := errors.New("Template not found -> " + name)

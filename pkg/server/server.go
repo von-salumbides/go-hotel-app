@@ -7,6 +7,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	m "github.com/von-salumbides/go-hotel/pkg/middleware"
 	"github.com/von-salumbides/go-hotel/pkg/render"
 	"go.uber.org/zap"
 )
@@ -33,8 +34,18 @@ func NewServer(config *ServerConfig) (*Server, error) {
 	e.HideBanner = true
 	e.HidePort = true
 	e.Renderer = render.RenderTemplate()
+	// CSRF
+	e.Use(middleware.CSRF())
+	// Custom middleware
+	s := m.NewStats()
+	e.Use(s.Process)
+	e.GET("/stats", s.Handle)
+	// Server header
+	e.Use(m.ServerHeader)
 	// Log HTTP requests
 	e.Use(middleware.Logger())
+	// Recover
+	e.Use(middleware.Recover())
 	return &Server{
 		httpAddress: config.httpAddress,
 		Echo:        e,

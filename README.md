@@ -1,4 +1,4 @@
-# Go Hotel - Booking appp
+# Go Hotel - Booking app
 
 ## Table of Contents
 

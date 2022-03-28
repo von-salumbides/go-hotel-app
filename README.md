@@ -16,7 +16,7 @@
 
 ### Prerequisites
 - Built in Go 1.18
-- Uses the [echo package](github.com/lasbtack/echo)  
+- Uses the [echo package](https://github.com/labstack/echo)  
 
 ### Installing
 

@@ -10,5 +10,5 @@ func Routes(server *server.Server) {
 
 	r.GET("/", handler.HomeHandler)
 	r.GET("/about", handler.AboutHandler)
-
+	r.Static("/static", "static")
 }
